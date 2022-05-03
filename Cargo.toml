@@ -1,0 +1,10 @@
+[package]
+name = "gcloud-utils"
+description = "Google Cloud Utilities."
+version = "0.1.0"
+authors = ["Fumitake Kawasaki <f.kawasaki@elsoul.nl>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
