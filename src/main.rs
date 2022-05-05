@@ -18,7 +18,8 @@ async fn main() {
     let cli = Cli::parse();
     match cli.command {
         Commands::Iam { message } => {
-            create_service_account_key(message.as_str()).await;
+            // create_service_account_key(message.as_str()).await;
+            add_roles().await;
             println!("{}", message);
         }
         Commands::Greet { name } => {
@@ -57,6 +58,48 @@ async fn create_service_account_key(name: &str) {
             "./keyfile.json",
             "--iam-account",
             service_account.as_str(),
+        ])
+        .output()
+        .await;
+    println!("output = {:?}", output);
+}
+
+async fn add_roles() {
+    let roles = [
+        "roles/cloudsql.editor",
+        "roles/containerregistry.ServiceAgent",
+        "roles/pubsub.editor",
+        "roles/datastore.user",
+        "roles/iam.serviceAccountUser",
+        "roles/run.admin",
+        "roles/storage.admin",
+        "roles/storage.objectAdmin",
+        "roles/cloudscheduler.admin",
+        "roles/appengine.appCreator",
+        "roles/logging.admin",
+        "roles/cloudtranslate.admin",
+    ];
+    for role in roles {
+        add_service_account_role(role).await;
+    }
+}
+
+async fn add_service_account_role(role_arg: &str) {
+    let service_name = "epic-gcu";
+    let project_id = "degitana-app";
+    let member = String::from("--member=serviceAccount:")
+        + service_name
+        + "@"
+        + project_id
+        + ".iam.gserviceaccount.com";
+    let role = String::from("--role=") + role_arg;
+    let output = Command::new("gcloud")
+        .args(&[
+            "projects",
+            "add-iam-policy-binding",
+            project_id,
+            member.as_str(),
+            role.as_str(),
         ])
         .output()
         .await;
