@@ -16,8 +16,8 @@ async fn main() {
     let gcp: GcpConfig = serde_json::from_reader(reader).unwrap();
     config_set(&gcp.project_id).await;
     match cli.command {
-        Commands::Iam { action } => {
-            if action == "setup" {
+        Commands::Iam { action } => match &*action {
+            "setup" => {
                 process_create_service_account(gcp.service_name.as_str()).await;
                 process_create_service_account_key(
                     gcp.service_name.as_str(),
@@ -25,18 +25,16 @@ async fn main() {
                 )
                 .await;
                 process_add_roles(gcp.service_name.as_str(), gcp.project_id.as_str()).await;
-            } else {
-                println!("no command!");
             }
-        }
-        Commands::Run { name } => {
-            if name == "deploy" {
+            _ => println!("no command!"),
+        },
+        Commands::Run { action } => match &*action {
+            "deploy" => {
                 process_build(&gcp.service_name, &gcp.project_id).await;
                 process_deploy(&gcp.service_name, &gcp.project_id).await;
-            } else {
-                println!("no command!");
             }
-        }
+            _ => println!("no command!"),
+        },
     }
 }
 

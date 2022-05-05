@@ -17,5 +17,5 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
   Iam { action: String },
-  Run { name: String },
+  Run { action: String },
 }

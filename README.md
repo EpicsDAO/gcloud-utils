@@ -44,11 +44,18 @@ vim gcp_config.json
 gcu --help
 ```
 
-## gcloud IAM Setup
+## Google Cloud IAM Setup
 Generate Service Account and Get Perimissions.
 
 ```bash
 gcu iam setup
+```
+
+## Google Cloud Run Deploy
+*make sure that you have a Dockerfile and it's successfully build.
+
+```bash
+gcu run deploy
 ```
 
 ## Contributing
