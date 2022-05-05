@@ -1,5 +1,9 @@
 use clap::{Parser, Subcommand};
+use serde::{Deserialize, Serialize};
 use tokio::process::Command;
+
+use std::fs::File;
+use std::io::BufReader;
 
 #[derive(Parser)]
 struct Cli {
@@ -16,11 +20,23 @@ enum Commands {
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+    let file_name = "gcp_config.json";
+    let file = File::open(file_name).unwrap();
+    let reader = BufReader::new(file);
+    let gcp: GcpConfig = serde_json::from_reader(reader).unwrap();
     match cli.command {
         Commands::Iam { message } => {
             // create_service_account_key(message.as_str()).await;
-            add_roles().await;
-            println!("{}", message);
+            if message == "create".to_string() {
+                create_service_account(gcp.service_name.as_str()).await;
+            } else if message == "create-key" {
+                create_service_account_key(gcp.service_name.as_str(), gcp.project_id.as_str())
+                    .await;
+            } else if message == "roles" {
+                add_roles().await;
+            } else {
+                println!("no command with '{}'", message);
+            }
         }
         Commands::Greet { name } => {
             println!("hello, {}", name);
@@ -28,8 +44,7 @@ async fn main() {
     }
 }
 
-async fn create_service_account() {
-    let service_name = "epic-gcu";
+async fn create_service_account(service_name: &str) {
     let description = String::from("--description='") + service_name + " Service Account'";
     let display_name = String::from("--display-name=") + service_name;
     let output = Command::new("gcloud")
@@ -46,9 +61,9 @@ async fn create_service_account() {
     println!("output = {:?}", output);
 }
 
-async fn create_service_account_key(name: &str) {
-    let project_id = "degitana-app";
-    let service_account = String::from(name) + "@" + project_id + ".iam.gserviceaccount.com";
+async fn create_service_account_key(service_name: &str, project_id: &str) {
+    let service_account =
+        String::from(service_name) + "@" + project_id + ".iam.gserviceaccount.com";
     let output = Command::new("gcloud")
         .args(&[
             "iam",
@@ -104,4 +119,11 @@ async fn add_service_account_role(role_arg: &str) {
         .output()
         .await;
     println!("output = {:?}", output);
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct GcpConfig {
+    project_id: String,
+    service_name: String,
+    region: String,
 }
