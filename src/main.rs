@@ -4,6 +4,7 @@ use std::io::BufReader;
 use tokio::process::Command;
 
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
+use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::run::*;
 
@@ -35,12 +36,18 @@ async fn main() {
             }
             _ => println!("no command!"),
         },
+        Commands::Gh { action } => match &*action {
+            "add-env" => {
+                process_setup_secret().await;
+            }
+            _ => println!("no command!"),
+        },
     }
 }
 
 async fn config_set(project_id: &str) {
     let output = Command::new("gcloud")
-        .args(&["config", "set", "project", project_id, ">/dev/null", "2>&1"])
+        .args(&["config", "set", "project", project_id])
         .output()
         .await;
     println!("output = {:?}", output);

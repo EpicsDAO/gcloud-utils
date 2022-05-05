@@ -18,4 +18,5 @@ pub struct Cli {
 pub enum Commands {
   Iam { action: String },
   Run { action: String },
+  Gh { action: String },
 }
