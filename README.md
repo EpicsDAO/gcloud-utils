@@ -20,7 +20,14 @@ Coming soon.
 Coming soon.
 
 ## Installation
-Coming soon.
+```bash
+cargo install gcloud-utils
+```
+## Usage
+
+```bash
+gcu --help
+```
 
 ## Contributing
 
