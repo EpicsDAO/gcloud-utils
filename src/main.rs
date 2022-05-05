@@ -13,7 +13,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Iam { message: String },
+    Iam { action: String },
     Greet { name: String },
 }
 
@@ -25,17 +25,16 @@ async fn main() {
     let reader = BufReader::new(file);
     let gcp: GcpConfig = serde_json::from_reader(reader).unwrap();
     match cli.command {
-        Commands::Iam { message } => {
-            // create_service_account_key(message.as_str()).await;
-            if message == "create".to_string() {
+        Commands::Iam { action } => {
+            if action == "create".to_string() {
                 create_service_account(gcp.service_name.as_str()).await;
-            } else if message == "create-key" {
+            } else if action == "create-key" {
                 create_service_account_key(gcp.service_name.as_str(), gcp.project_id.as_str())
                     .await;
-            } else if message == "roles" {
+            } else if action == "roles" {
                 add_roles().await;
             } else {
-                println!("no command with '{}'", message);
+                println!("no command with '{}'", action);
             }
         }
         Commands::Greet { name } => {
