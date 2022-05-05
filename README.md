@@ -23,10 +23,32 @@ Coming soon.
 ```bash
 cargo install gcloud-utils
 ```
+
+Create `gcp_config.json` config file at first.
+```bash
+vim gcp_config.json
+```
+
+`gcp_config.json`
+```bash
+{
+  "project_id": "epic-app",
+  "service_name": "epic-gcp",
+  "region": "europe-west4"
+}
+```
+
 ## Usage
 
 ```bash
 gcu --help
+```
+
+## gcloud IAM Setup
+Generate Service Account and Get Perimissions.
+
+```bash
+gcu iam setup
 ```
 
 ## Contributing

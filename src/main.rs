@@ -31,7 +31,7 @@ async fn main() {
                 create_service_account(gcp.service_name.as_str()).await;
                 create_service_account_key(gcp.service_name.as_str(), gcp.project_id.as_str())
                     .await;
-                add_roles().await;
+                add_roles(gcp.service_name.as_str(), gcp.project_id.as_str()).await;
             } else {
                 println!("no command!");
             }
@@ -85,7 +85,7 @@ async fn create_service_account_key(service_name: &str, project_id: &str) {
     println!("output = {:?}", output);
 }
 
-async fn add_roles() {
+async fn add_roles(service_name: &str, project_id: &str) {
     let roles = [
         "roles/cloudsql.editor",
         "roles/containerregistry.ServiceAgent",
@@ -101,13 +101,11 @@ async fn add_roles() {
         "roles/cloudtranslate.admin",
     ];
     for role in roles {
-        add_service_account_role(role).await;
+        add_service_account_role(service_name, project_id, role).await;
     }
 }
 
-async fn add_service_account_role(role_arg: &str) {
-    let service_name = "epic-gcu";
-    let project_id = "degitana-app";
+async fn add_service_account_role(service_name: &str, project_id: &str, role_arg: &str) {
     let member = String::from("--member=serviceAccount:")
         + service_name
         + "@"
