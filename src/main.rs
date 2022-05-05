@@ -40,7 +40,7 @@ async fn main() {
 
 async fn config_set(project_id: &str) {
     let output = Command::new("gcloud")
-        .args(&["config", "set", "project", project_id])
+        .args(&["config", "set", "project", project_id, ">/dev/null", "2>&1"])
         .output()
         .await;
     println!("output = {:?}", output);
