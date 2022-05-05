@@ -14,7 +14,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Iam { action: String },
-    Greet { name: String },
+    Compute { name: String },
 }
 
 #[tokio::main]
@@ -26,21 +26,28 @@ async fn main() {
     let gcp: GcpConfig = serde_json::from_reader(reader).unwrap();
     match cli.command {
         Commands::Iam { action } => {
-            if action == "create".to_string() {
+            if action == "setup" {
+                config_set(gcp.project_id.as_str()).await;
                 create_service_account(gcp.service_name.as_str()).await;
-            } else if action == "create-key" {
                 create_service_account_key(gcp.service_name.as_str(), gcp.project_id.as_str())
                     .await;
-            } else if action == "roles" {
                 add_roles().await;
             } else {
-                println!("no command with '{}'", action);
+                println!("no command!");
             }
         }
-        Commands::Greet { name } => {
+        Commands::Compute { name } => {
             println!("hello, {}", name);
         }
     }
+}
+
+async fn config_set(project_id: &str) {
+    let output = Command::new("gcloud")
+        .args(&["config", "set", "project", project_id])
+        .output()
+        .await;
+    println!("output = {:?}", output);
 }
 
 async fn create_service_account(service_name: &str) {
