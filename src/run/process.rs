@@ -16,3 +16,13 @@ pub async fn process_build(service_name: &str, project_id: &str) {
     .await;
   println!("output = {:?}", output);
 }
+
+pub async fn process_deploy(service_name: &str, project_id: &str) {
+  let img_url = String::from("gcr.io/") + project_id + "/" + service_name;
+  println!("{}", &img_url);
+  let output = Command::new("gcloud")
+    .args(&["run", "deploy", "--image", &img_url])
+    .output()
+    .await;
+  println!("output = {:?}", output);
+}

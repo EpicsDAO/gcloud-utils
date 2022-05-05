@@ -5,7 +5,7 @@ use tokio::process::Command;
 
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
 use gcloud_utils::iam::*;
-use gcloud_utils::run::process_build;
+use gcloud_utils::run::*;
 
 #[tokio::main]
 async fn main() {
@@ -30,8 +30,12 @@ async fn main() {
             }
         }
         Commands::Run { name } => {
-            process_build(&gcp.service_name, &gcp.project_id).await;
-            println!("hello, {}", name);
+            if name == "deploy" {
+                process_build(&gcp.service_name, &gcp.project_id).await;
+                process_deploy(&gcp.service_name, &gcp.project_id).await;
+            } else {
+                println!("no command!");
+            }
         }
     }
 }
