@@ -50,7 +50,9 @@ async fn main() {
         },
         Commands::Init { action } => match &*action {
             "config" => {
-                process_init_gcp_config().await;
+                if file_exist != false {
+                    process_init_gcp_config().await;
+                }
             }
             _ => println!("no command!"),
         }
