@@ -7,13 +7,19 @@ use gcloud_utils::cli::{Cli, Commands, GcpConfig};
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::run::*;
+use gcloud_utils::init::*;
+use std::path::Path;
 
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
     let file_name = "gcp_config.json";
-    let file = File::open(file_name).unwrap();
-    let reader = BufReader::new(file);
+    let file_exist = Path::new(file_name).exists();
+    if file_exist == false {
+        process_init_gcp_config().await;
+    }
+    let f = File::open(file_name).unwrap();
+    let reader = BufReader::new(f);
     let gcp: GcpConfig = serde_json::from_reader(reader).unwrap();
     config_set(&gcp.project_id).await;
     match cli.command {
@@ -42,13 +48,19 @@ async fn main() {
             }
             _ => println!("no command!"),
         },
+        Commands::Init { action } => match &*action {
+            "config" => {
+                process_init_gcp_config().await;
+            }
+            _ => println!("no command!"),
+        }
     }
 }
 
 async fn config_set(project_id: &str) {
-    let output = Command::new("gcloud")
+    let _output = Command::new("gcloud")
         .args(&["config", "set", "project", project_id])
         .output()
         .await;
-    println!("output = {:?}", output);
+    // println!("output = {:?}", output);
 }
