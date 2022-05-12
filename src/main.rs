@@ -6,8 +6,8 @@ use tokio::process::Command;
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
-use gcloud_utils::run::*;
 use gcloud_utils::init::*;
+use gcloud_utils::run::*;
 use std::path::Path;
 
 #[tokio::main]
@@ -32,6 +32,7 @@ async fn main() {
                 )
                 .await;
                 process_add_roles(gcp.service_name.as_str(), gcp.project_id.as_str()).await;
+                process_enable_permissions().await;
             }
             _ => println!("no command!"),
         },
@@ -55,7 +56,7 @@ async fn main() {
                 }
             }
             _ => println!("no command!"),
-        }
+        },
     }
 }
 
