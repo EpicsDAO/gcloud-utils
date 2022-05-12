@@ -2,16 +2,18 @@ use clap::Parser;
 use std::fs::File;
 use std::io::BufReader;
 use tokio::process::Command;
-
+use console::style;
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::run::*;
 use gcloud_utils::init::*;
 use std::path::Path;
+use gcloud_utils::constants::{COMPLETE_EMOJI, ERROR_EMOJI};
 
 #[tokio::main]
 async fn main() {
+    println!("{}{}", COMPLETE_EMOJI, style("Command successful.").green().bold());
     let cli = Cli::parse();
     let file_name = "gcp_config.json";
     let file_exist = Path::new(file_name).exists();
