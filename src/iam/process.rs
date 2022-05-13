@@ -77,3 +77,30 @@ pub async fn process_add_service_account_role(
     .await;
   println!("output = {:?}", output);
 }
+
+pub async fn process_enable_permissions() {
+  let service_urls = [
+    "compute.googleapis.com",
+    "iam.googleapis.com",
+    "dns.googleapis.com",
+    "sqladmin.googleapis.com",
+    "sql-component.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "containerregistry.googleapis.com",
+    "run.googleapis.com",
+    "vpcaccess.googleapis.com",
+    "cloudscheduler.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "translate.googleapis.com",
+    "firestore.googleapis.com",
+    "cloudfunctions.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "spanner.googleapis.com",
+  ];
+  for service_name in service_urls {
+    let _output = Command::new("gcloud")
+      .args(&["services", "enable", service_name])
+      .output()
+      .await;
+  }
+}
