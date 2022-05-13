@@ -78,7 +78,7 @@ dependencies = [
 
 [[package]]
 name = "gcloud-utils"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "clap",
  "serde",
