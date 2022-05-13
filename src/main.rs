@@ -2,13 +2,14 @@ use clap::Parser;
 use std::fs::File;
 use std::io::BufReader;
 use tokio::process::Command;
-
+use console::style;
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::init::*;
 use gcloud_utils::run::*;
 use std::path::Path;
+use gcloud_utils::constants::{COMPLETE_EMOJI};
 
 #[tokio::main]
 async fn main() {
@@ -17,6 +18,7 @@ async fn main() {
     let file_exist = Path::new(file_name).exists();
     if file_exist == false {
         process_init_gcp_config().await;
+        println!("{}{}", COMPLETE_EMOJI, style("Command successful. Generated `./gcp_config.json` file!").green().bold());
     }
     let f = File::open(file_name).unwrap();
     let reader = BufReader::new(f);
@@ -53,6 +55,7 @@ async fn main() {
             "config" => {
                 if file_exist != false {
                     process_init_gcp_config().await;
+                    println!("{}{}", COMPLETE_EMOJI, style("Command successful. Generated `./gcp_config.json` file!").green().bold());
                 }
             }
             _ => println!("no command!"),

@@ -46,7 +46,7 @@ pub async fn process_init_gcp_config() {
   let result = write_gcp_config(json_struct).await;
   match result {
     Ok(..) => {
-      println!("Generated `./gcp_config.json` file!")
+      println!("")
     }
     Err(err) => {
       println!("Failed to Write: {}", err)
