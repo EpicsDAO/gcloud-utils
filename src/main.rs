@@ -4,6 +4,7 @@ use std::io::BufReader;
 use tokio::process::Command;
 use console::style;
 use gcloud_utils::cli::{Cli, Commands, GcpConfig};
+use gcloud_utils::compute::*;
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::init::*;
@@ -57,6 +58,19 @@ async fn main() {
                     process_init_gcp_config().await;
                     println!("{}{}", COMPLETE_EMOJI, style("Command successful. Generated `./gcp_config.json` file!").green().bold());
                 }
+            }
+            _ => println!("no command!"),
+        },
+        Commands::Compute { action } => match &*action {
+            "create-nat" => {
+                process_create_network(&gcp.service_name).await;
+                process_create_firewall_tcp(&gcp.service_name).await;
+                process_create_firewall_ssh(&gcp.service_name).await;
+                process_create_subnet(&gcp.service_name, &gcp.region).await;
+                process_create_connector(&gcp.service_name, &gcp.project_id, &gcp.region).await;
+                process_create_router(&gcp.service_name, &gcp.region).await;
+                process_create_external_ip(&gcp.service_name, &gcp.region).await;
+                process_create_nat(&gcp.service_name, &gcp.region).await;
             }
             _ => println!("no command!"),
         },
