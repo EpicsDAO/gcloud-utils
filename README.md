@@ -14,10 +14,8 @@
 
 
 ## What is gcloud-utils?
-Coming soon.
-
-## Dependency
-Coming soon.
+Google Cloud gcloud SDK Rust Wrapper.
+Easy setup with Cloud Run for Web 2.5
 
 ## Installation
 ```bash
