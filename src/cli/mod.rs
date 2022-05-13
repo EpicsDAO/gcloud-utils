@@ -19,5 +19,6 @@ pub enum Commands {
   Iam { action: String },
   Run { action: String },
   Gh { action: String },
-  Init { action: String }
+  Init { action: String },
+  Compute { action: String },
 }
