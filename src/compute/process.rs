@@ -115,10 +115,10 @@ pub async fn process_create_external_ip(service_name: &str, region: &str) {
 
 pub async fn process_create_nat(service_name: &str, region: &str) {
   let nat = String::from(service_name) + "-nat";
-  let router = String::from(service_name) + "-router";
+  let router = String::from("--router=") + service_name + "-router";
   let region_str = String::from("--region=") + region;
-  let nat_custom_subnet_ip_ranges = String::from(service_name) + "-subnet";
-  let nat_external_ip_pool = String::from(service_name) + "-ip";
+  let nat_custom_subnet_ip_ranges = String::from("--nat-custom-subnet-ip-ranges=") + service_name + "-subnet";
+  let nat_external_ip_pool = String::from("--nat-external-ip-pool=") + service_name + "-ip";
   let output = Command::new("gcloud")
     .args(&[
       "compute",
