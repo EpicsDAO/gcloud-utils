@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -9,16 +9,85 @@ pub struct GcpConfig {
 }
 
 #[derive(Parser)]
+#[clap(author, version, about, long_about = None)]
 pub struct Cli {
+  name: Option<String>,
   #[clap(subcommand)]
   pub command: Commands,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
-  Iam { action: String },
-  Run { action: String },
-  Gh { action: String },
-  Init { action: String },
-  Compute { action: String },
+  Iam(Iam),
+  Run(Run),
+  Gh(Gh),
+  Init(Init),
+  Compute(Compute),
+}
+
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Iam {
+    #[clap(subcommand)]
+    pub command: Option<IamCommands>,
+}
+
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Compute {
+    #[clap(subcommand)]
+    pub command: Option<ComputeCommands>,
+}
+
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Init {
+    #[clap(subcommand)]
+    pub command: Option<InitCommands>,
+}
+
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Gh {
+    #[clap(subcommand)]
+    pub command: Option<GhCommands>,
+}
+
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Run {
+    #[clap(subcommand)]
+    pub command: Option<RunCommands>,
+}
+
+
+
+#[derive(Debug, Subcommand)]
+pub enum IamCommands {
+    Setup,
+    Help
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ComputeCommands {
+    CreateNat,
+    Help
+}
+
+#[derive(Debug, Subcommand)]
+pub enum InitCommands {
+    Config,
+    Help
+}
+
+#[derive(Debug, Subcommand)]
+pub enum GhCommands {
+    AddEnv,
+    Help
+}
+
+#[derive(Debug, Subcommand)]
+pub enum RunCommands {
+    Deploy,
+    Help
 }
