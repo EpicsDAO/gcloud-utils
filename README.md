@@ -49,12 +49,35 @@ Generate Service Account and Get Perimissions.
 gcu iam setup
 ```
 
+
 ## Google Cloud Run Deploy
 *make sure that you have a Dockerfile and it's successfully build.
 
 ```bash
 gcu run deploy
 ```
+
+
+## Creating a VPC network
+
+Make the necessary settings to scale the network, such as VPC network and firewall settings.
+
+```bash
+$ gcu compute create-nat
+```
+
+By this command
+
+- Creating a VPC network
+- Creating Firewall TCP rules
+- Creating Firewall SSH rules
+- Creating a network subnet
+- Creating a VPC access connector
+- Creating a Router
+- Obtaining an External IP
+- Creating Cloud NAT
+
+Is done automatically.
 
 ## Contributing
 

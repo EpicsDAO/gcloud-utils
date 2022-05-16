@@ -1,14 +1,22 @@
 use tokio::process::Command;
 
-pub async fn process_create_network(service_name: &str) {
+pub async fn process_create_network(project_id: &str, service_name: &str) {
   let output = Command::new("gcloud")
-    .args(&["compute", "networks", "create", service_name])
+    .args(
+      &[
+        "compute",
+        "networks",
+        "create",
+        service_name,
+        "--project",
+        project_id
+        ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_firewall_tcp(service_name: &str) {
+pub async fn process_create_firewall_tcp(project_id: &str, service_name: &str) {
   let output = Command::new("gcloud")
     .args(&[
       "compute",
@@ -20,13 +28,15 @@ pub async fn process_create_firewall_tcp(service_name: &str) {
       "tcp,udp,icmp",
       "--source-ranges",
       "10.124.0.0/28",
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_firewall_ssh(service_name: &str) {
+pub async fn process_create_firewall_ssh(project_id: &str, service_name: &str) {
   let firewall = String::from(service_name) + "-ssh";
   let output = Command::new("gcloud")
     .args(&[
@@ -38,16 +48,16 @@ pub async fn process_create_firewall_ssh(service_name: &str) {
       service_name,
       "--allow",
       "tcp:22,tcp:3389,icmp",
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_subnet(service_name: &str, region: &str) {
+pub async fn process_create_subnet(project_id: &str, service_name: &str, region: &str) {
   let subnet = String::from(service_name) + "-subnet";
-  let network = String::from("--network=") + service_name;
-  let region_str = String::from("--region=") + region;
   let output = Command::new("gcloud")
     .args(&[
       "compute",
@@ -55,19 +65,22 @@ pub async fn process_create_subnet(service_name: &str, region: &str) {
       "subnets",
       "create",
       &subnet,
-      "--range=10.124.0.0/28",
-      &network,
-      &region_str,
+      "--range",
+      "10.124.0.0/28",
+      "--network",
+      service_name,
+      "--region",
+      region,
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_connector(service_name: &str, project_id: &str, region: &str) {
-  let subnet = String::from("--subnet=") + service_name + "-subnet";
-  let subnet_project = String::from("--subnet-project=") + project_id;
-  let region_str = String::from("--region=") + region;
+pub async fn process_create_connector(project_id: &str, service_name: &str, region: &str) {
+  let subnet = String::from(service_name) + "-subnet";
   let output = Command::new("gcloud")
     .args(&[
       "compute",
@@ -76,49 +89,64 @@ pub async fn process_create_connector(service_name: &str, project_id: &str, regi
       "connectors",
       "create",
       service_name,
+      "--subnet",
       &subnet,
-      &subnet_project,
-      &region_str,
+      "--subnet-project",
+      project_id,
+      "--region",
+      region,
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_router(service_name: &str, region: &str) {
+pub async fn process_create_router(project_id: &str, service_name: &str, region: &str) {
   let router = String::from(service_name) + "-router";
-  let network = String::from("--network=") + service_name;
-  let region_str = String::from("--region=") + region;
   let output = Command::new("gcloud")
     .args(&[
       "compute",
       "routers",
       "create",
       &router,
-      &network,
-      &region_str,
+      "--network",
+      service_name,
+      "--region",
+      region,
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_external_ip(service_name: &str, region: &str) {
+pub async fn process_create_external_ip(project_id: &str, service_name: &str, region: &str) {
   let external_ip = String::from(service_name) + "-ip";
-  let region_str = String::from("--region=") + region;
   let output = Command::new("gcloud")
-    .args(&["compute", "addresses", "create", &external_ip, &region_str])
+    .args(
+      &[
+        "compute",
+        "addresses",
+        "create",
+        &external_ip,
+        "--region",
+        region,
+        "--project",
+        project_id
+        ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_nat(service_name: &str, region: &str) {
+pub async fn process_create_nat(project_id: &str, service_name: &str, region: &str) {
   let nat = String::from(service_name) + "-nat";
-  let router = String::from("--router=") + service_name + "-router";
-  let region_str = String::from("--region=") + region;
-  let nat_custom_subnet_ip_ranges = String::from("--nat-custom-subnet-ip-ranges=") + service_name + "-subnet";
-  let nat_external_ip_pool = String::from("--nat-external-ip-pool=") + service_name + "-ip";
+  let router = String::from(service_name) + "-router";
+  let nat_custom_subnet_ip_ranges = String::from(service_name) + "-subnet";
+  let nat_external_ip_pool = String::from(service_name) + "-ip";
   let output = Command::new("gcloud")
     .args(&[
       "compute",
@@ -126,10 +154,16 @@ pub async fn process_create_nat(service_name: &str, region: &str) {
       "nats",
       "create",
       &nat,
+      "--router",
       &router,
-      &region_str,
+      "--region",
+      region,
+      "--nat-custom-subnet-ip-ranges",
       &nat_custom_subnet_ip_ranges,
+      "--nat-external-ip-pool",
       &nat_external_ip_pool,
+      "--project",
+      project_id
     ])
     .output()
     .await;

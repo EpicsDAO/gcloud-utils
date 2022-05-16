@@ -1,6 +1,6 @@
 use tokio::process::Command;
 
-pub async fn process_create_service_account(service_name: &str) {
+pub async fn process_create_service_account(project_id: &str, service_name: &str) {
   let description = String::from("--description='") + service_name + " Service Account'";
   let display_name = String::from("--display-name=") + service_name;
   let output = Command::new("gcloud")
@@ -11,13 +11,15 @@ pub async fn process_create_service_account(service_name: &str) {
       service_name,
       description.as_str(),
       display_name.as_str(),
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_create_service_account_key(service_name: &str, project_id: &str) {
+pub async fn process_create_service_account_key(project_id: &str, service_name: &str) {
   let service_account = String::from(service_name) + "@" + project_id + ".iam.gserviceaccount.com";
   let output = Command::new("gcloud")
     .args(&[
@@ -28,13 +30,15 @@ pub async fn process_create_service_account_key(service_name: &str, project_id: 
       "./keyfile.json",
       "--iam-account",
       service_account.as_str(),
+      "--project",
+      project_id 
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_add_roles(service_name: &str, project_id: &str) {
+pub async fn process_add_roles(project_id: &str, service_name: &str) {
   let roles = [
     "roles/cloudsql.editor",
     "roles/containerregistry.ServiceAgent",
@@ -50,13 +54,13 @@ pub async fn process_add_roles(service_name: &str, project_id: &str) {
     "roles/cloudtranslate.admin",
   ];
   for role in roles {
-    process_add_service_account_role(service_name, project_id, role).await;
+    process_add_service_account_role(project_id, service_name, role).await;
   }
 }
 
 pub async fn process_add_service_account_role(
-  service_name: &str,
   project_id: &str,
+  service_name: &str,
   role_arg: &str,
 ) {
   let member = String::from("--member=serviceAccount:")
@@ -72,13 +76,15 @@ pub async fn process_add_service_account_role(
       project_id,
       member.as_str(),
       role.as_str(),
+      "--project",
+      project_id
     ])
     .output()
     .await;
   println!("output = {:?}", output);
 }
 
-pub async fn process_enable_permissions() {
+pub async fn process_enable_permissions(project_id: &str) {
   let service_urls = [
     "compute.googleapis.com",
     "iam.googleapis.com",
@@ -99,7 +105,14 @@ pub async fn process_enable_permissions() {
   ];
   for service_name in service_urls {
     let _output = Command::new("gcloud")
-      .args(&["services", "enable", service_name])
+      .args(
+        &[
+          "services",
+          "enable",
+          service_name,
+          "--project",
+          project_id
+          ])
       .output()
       .await;
   }
