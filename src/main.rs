@@ -9,7 +9,7 @@ use gcloud_utils::compute::*;
 use gcloud_utils::init::*;
 use gcloud_utils::run::*;
 use std::path::Path;
-use gcloud_utils::constants::{COMPLETE_EMOJI, PAPER_EMOJI};
+use gcloud_utils::constants::{PAPER_EMOJI};
 
 #[tokio::main]
 async fn main() {
@@ -18,7 +18,6 @@ async fn main() {
     let file_exist = Path::new(file_name).exists();
     if file_exist == false {
         process_init_gcp_config().await;
-        println!("{}{}", COMPLETE_EMOJI, style("Command successful. Generated `./gcp_config.json` file!").green().bold());
     }
     let f = File::open(file_name).unwrap();
     let reader = BufReader::new(f);

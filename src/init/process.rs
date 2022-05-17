@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Write};
 use std::io;
+use console::style;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GcpConfig {
@@ -12,7 +13,7 @@ pub struct GcpConfig {
 
 
 pub async fn process_init_gcp_config() {
-  println!("Please input your GCP project_id:");
+  println!("📝 {}", style("Please input your GCP project_id:").white().bold());
   let mut project_id = String::new();
   io::stdin()
       .read_line(&mut project_id)
@@ -22,7 +23,7 @@ pub async fn process_init_gcp_config() {
     .parse()
     .expect("Please input your GCP project_id:");
 
-  println!("Please input your GCP service_name:");
+  println!("📝 {}", style("Please input your GCP service_name:").white().bold());
   let mut service_name = String::new();
   io::stdin()
       .read_line(&mut service_name)
@@ -32,7 +33,7 @@ pub async fn process_init_gcp_config() {
     .parse()
     .expect("Please input your GCP service_name:");
 
-  println!("Please input your GCP region:");
+  println!("📝 {}", style("Please input your GCP region:").white().bold());
   let mut region = String::new();
   io::stdin()
       .read_line(&mut region)
@@ -46,7 +47,8 @@ pub async fn process_init_gcp_config() {
   let result = write_gcp_config(json_struct).await;
   match result {
     Ok(..) => {
-      println!("")
+      println!("✅ {}", style("Successfully Generated!").green().bold());
+      println!("🗃️ {}", style("File Path: ./gcp_config.json").white().bold());
     }
     Err(err) => {
       println!("Failed to Write: {}", err)
