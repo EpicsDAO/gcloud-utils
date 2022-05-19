@@ -36,7 +36,7 @@ pub async fn process_docker_psql() {
       "POSTGRES_PASSWORD=postgres",
       "-e",
       "POSTGRES_DB=epics_test",
-      "postgres:14.3-alpine",
+      "postgres:14.2-alpine",
     ])
     .output()
     .await;

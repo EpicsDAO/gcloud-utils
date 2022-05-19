@@ -4,10 +4,10 @@
   </a>
   <br/>
   <a aria-label="Crate Version" href="https://crates.io/crates/gcloud-utils">
-    <img alt="" src="https://badgen.net/crates/v/regex">
+    <img alt="" src="https://badgen.net/crates/v/gcloud-utils">
   </a>
   <a aria-label="Crate Download" href="https://crates.io/crates/gcloud-utils">
-    <img alt="" src="https://badgen.net/crates/d/regex">
+    <img alt="" src="https://badgen.net/crates/d/gcloud-utils">
   </a>
   <a aria-label="License" href="https://github.com/EpicsDao/epics/blob/master/LICENSE.txt">
     <img alt="" src="https://badgen.net/badge/license/Apache/blue">
