@@ -45,7 +45,7 @@ async fn main() {
             let run_cmd = run.command.unwrap_or(RunCommands::Help);
             match run_cmd {
                 RunCommands::Deploy => {
-                    process_build(&gcp.project_id, &gcp.service_name).await;
+                    process_gcloud_build(&gcp.project_id, &gcp.service_name).await;
                     process_deploy(&gcp.project_id, &gcp.service_name).await;
                 }
                 _ => {

@@ -12,6 +12,8 @@ pub struct GcpConfig {
 }
 
 
+
+
 pub async fn process_init_gcp_config() {
   println!("📝 {}", style("Please input your GCP project_id:").white().bold());
   let mut project_id = String::new();

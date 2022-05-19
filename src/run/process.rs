@@ -1,6 +1,6 @@
 use tokio::process::Command;
 
-pub async fn process_build(project_id: &str, service_name: &str) {
+pub async fn process_gcloud_build(project_id: &str, service_name: &str) {
   let gcr_url = String::from("eu.gcr.io/") + project_id + "/" + service_name;
   let output = Command::new("gcloud")
     .args(
