@@ -1,8 +1,10 @@
-use serde::{Deserialize, Serialize};
-use std::fs::File;
-use std::io::{Write};
-use std::io;
 use console::style;
+use serde::{Deserialize, Serialize};
+use std::fs;
+use std::fs::File;
+use std::io;
+use std::io::Write;
+use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GcpConfig {
@@ -11,35 +13,41 @@ pub struct GcpConfig {
   pub region: String,
 }
 
-
-
-
 pub async fn process_init_gcp_config() {
-  println!("📝 {}", style("Please input your GCP project_id:").white().bold());
+  println!(
+    "📝 {}",
+    style("Please input your GCP project_id:").white().bold()
+  );
   let mut project_id = String::new();
   io::stdin()
-      .read_line(&mut project_id)
-      .expect("Failed to read line");
+    .read_line(&mut project_id)
+    .expect("Failed to read line");
   let project_id: String = project_id
     .trim()
     .parse()
     .expect("Please input your GCP project_id:");
 
-  println!("📝 {}", style("Please input your GCP service_name:").white().bold());
+  println!(
+    "📝 {}",
+    style("Please input your GCP service_name:").white().bold()
+  );
   let mut service_name = String::new();
   io::stdin()
-      .read_line(&mut service_name)
-      .expect("Failed to read line");
+    .read_line(&mut service_name)
+    .expect("Failed to read line");
   let service_name: String = service_name
     .trim()
     .parse()
     .expect("Please input your GCP service_name:");
 
-  println!("📝 {}", style("Please input your GCP region:").white().bold());
+  println!(
+    "📝 {}",
+    style("Please input your GCP region:").white().bold()
+  );
   let mut region = String::new();
   io::stdin()
-      .read_line(&mut region)
-      .expect("Failed to read line");  
+    .read_line(&mut region)
+    .expect("Failed to read line");
   let region: String = region
     .trim()
     .parse()
@@ -58,7 +66,6 @@ pub async fn process_init_gcp_config() {
   }
 }
 
-
 async fn write_gcp_config(json_struct: GcpConfig) -> std::io::Result<()> {
   let serialized: String = serde_json::to_string_pretty(&json_struct).unwrap();
   let mut file = File::create("gcp_config.json")?;
@@ -66,11 +73,45 @@ async fn write_gcp_config(json_struct: GcpConfig) -> std::io::Result<()> {
   Ok(())
 }
 
-
 async fn build_gcp_config(project_id: String, service_name: String, region: String) -> GcpConfig {
   GcpConfig {
     project_id,
     service_name,
     region,
   }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ApiWorkflow {
+  pub name: String,
+  pub on: Push,
+  pub jobs: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Push {
+  pub push: Branch,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Branch {
+  pub branches: String,
+}
+
+pub async fn build_api_workflow(nat: bool) -> std::io::Result<()> {
+  let workflow_template = match nat {
+    true => "./src/init/nat.yml",
+    false => "./src/init/default.yml",
+  };
+  let workflow_yml = ".github/workflows/epic_service.yml";
+  let file_exist = Path::new(workflow_yml).exists();
+  match file_exist {
+    true => {
+      panic!("File already exist!")
+    }
+    false => {
+      let _ = fs::copy(workflow_template, workflow_yml);
+    }
+  }
+  Ok(())
 }

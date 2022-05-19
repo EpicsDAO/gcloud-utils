@@ -92,6 +92,9 @@ async fn main() {
                 InitCommands::Config => {
                     process_init_gcp_config().await;
                 }
+                InitCommands::GhActions { nat } => {
+                    let _ = build_api_workflow(nat).await;
+                }
                 _ => {
                     println!(
                         "{}{}",

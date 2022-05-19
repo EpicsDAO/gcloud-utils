@@ -9,9 +9,10 @@ pub struct GcpConfig {
 }
 
 #[derive(Parser)]
-#[clap(author, version, about, long_about = None)]
+#[clap(name = "gcloud-utils")]
+#[clap(about = "Google Cloud gcloud SDK Rust Wrapper")]
+#[clap(author = "EpicsDAO", version, long_about = None)]
 pub struct Cli {
-    name: Option<String>,
     #[clap(subcommand)]
     pub command: Commands,
 }
@@ -83,6 +84,10 @@ pub enum ComputeCommands {
 #[derive(Debug, Subcommand)]
 pub enum InitCommands {
     Config,
+    GhActions {
+        #[clap(short, long)]
+        nat: bool,
+    },
     Help,
 }
 
