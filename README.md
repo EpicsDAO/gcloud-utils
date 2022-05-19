@@ -3,7 +3,12 @@
     <img src="https://img.shields.io/twitter/follow/EpicsDAO.svg?label=Follow%20@EpicsDAO" alt="Follow @EpicsDAO" />
   </a>
   <br/>
-
+  <a aria-label="Crate Version" href="https://crates.io/crates/gcloud-utils">
+    <img alt="" src="https://badgen.net/crates/v/regex">
+  </a>
+  <a aria-label="Crate Download" href="https://crates.io/crates/gcloud-utils">
+    <img alt="" src="https://badgen.net/crates/d/regex">
+  </a>
   <a aria-label="License" href="https://github.com/EpicsDao/epics/blob/master/LICENSE.txt">
     <img alt="" src="https://badgen.net/badge/license/Apache/blue">
   </a>
@@ -40,6 +45,21 @@ gcu init config
 
 ```bash
 gcu --help
+USAGE:
+    gcu <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    compute    
+    docker     
+    gh         
+    help       Print this message or the help of the given subcommand(s)
+    iam        
+    init       
+    run   
 ```
 
 ## Google Cloud IAM Setup
@@ -47,6 +67,20 @@ Generate Service Account and Get Perimissions.
 
 ```bash
 gcu iam setup
+```
+
+## Build Your Contaier
+*make sure that you have a Dockerfile and it's successfully build.
+
+### Using Docker
+```bash
+gcu docker build
+gcu docker push
+```
+
+### Using gcloud build
+```bash
+gcu run build
 ```
 
 
