@@ -1,6 +1,5 @@
 use console::style;
 use serde::{Deserialize, Serialize};
-use std::env::current_exe;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -100,15 +99,13 @@ pub struct Branch {
 }
 
 pub async fn build_api_workflow(nat: bool) -> std::io::Result<()> {
-  let current_exe = std::env::current_exe().unwrap();
-  let file_path = String::from(current_exe.to_string_lossy());
-  let workflow_dir = file_path.to_string() + ".github/workflow";
+  let workflow_dir = ".github/workflows";
   fs::create_dir_all(workflow_dir).unwrap_or_else(|why| {
     println!("! {:?}", why.kind());
   });
   let workflow_template = match nat {
-    true => file_path.to_string() + ".github/workflow/nat.yml",
-    false => file_path.to_string() + ".github/workflow/default.yml",
+    true => "./src/nat.yml",
+    false => "./src/default.yml",
   };
   let workflow_yml = ".github/workflows/epic_service.yml";
   let file_exist = Path::new(workflow_yml).exists();
@@ -117,10 +114,12 @@ pub async fn build_api_workflow(nat: bool) -> std::io::Result<()> {
       panic!("File already exist!")
     }
     false => {
-      let _ = fs::copy(workflow_template, workflow_yml);
-      println!("✅ {}", style("Successfully Generated!").green().bold());
+      let copy_yaml = fs::copy(workflow_template, workflow_yml);
+      match copy_yaml {
+        Ok(_) => println!("✅ {}", style("Successfully Generated!").green().bold()),
+        Err(error) => panic!("error: {}", error),
+      }
     }
   }
-  println!("{:?}", std::env::current_exe());
   Ok(())
 }
