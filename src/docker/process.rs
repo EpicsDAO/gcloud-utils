@@ -29,14 +29,14 @@ pub async fn process_docker_psql() {
       "-p",
       "5432:5432",
       "-v",
-      "postgres-tmp:/var/lib/postgresql/data",
+      "postgres-tmp:/home/postgresql/data",
       "-e",
       "POSTGRES_USER=postgres",
       "-e",
       "POSTGRES_PASSWORD=postgres",
       "-e",
       "POSTGRES_DB=epics_test",
-      "postgres:14.2-alpine",
+      "postgres:14.3-alpine",
     ])
     .output()
     .await;
