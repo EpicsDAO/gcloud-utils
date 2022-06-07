@@ -1,4 +1,6 @@
 use tokio::process::Command;
+use std::str;
+use console::style;
 
 pub async fn process_docker_build(project_id: &str, service_name: &str) {
   let gcr_url = String::from("eu.gcr.io/") + project_id + "/" + service_name;
@@ -29,16 +31,32 @@ pub async fn process_docker_psql() {
       "-p",
       "5432:5432",
       "-v",
-      "postgres-tmp:/var/lib/postgresql/data",
+      "postgres-tmp:/home/postgresql/data",
       "-e",
       "POSTGRES_USER=postgres",
       "-e",
       "POSTGRES_PASSWORD=postgres",
       "-e",
-      "POSTGRES_DB=epics_test",
-      "postgres:14.2-alpine",
+      "POSTGRES_DB=epics_db",
+      "postgres:14.3-alpine",
     ])
     .output()
     .await;
-  println!("output = {:?}", output);
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let out = str::from_utf8(&val.stdout);
+      match out.unwrap() {
+        "" => println!("{:?}", err.unwrap().trim()),
+        _ => {
+          println!(
+            "✅ {} {}",
+            style("PostgreSQL Container Created:").white().bold(),
+            style(out.unwrap().trim()).white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
 }
