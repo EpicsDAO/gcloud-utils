@@ -6,3 +6,4 @@ pub mod iam;
 pub mod init;
 pub mod run;
 pub mod docker;
+pub mod sql;

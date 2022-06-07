@@ -25,6 +25,7 @@ pub enum Commands {
     Init(Init),
     Compute(Compute),
     Docker(Docker),
+    Sql(Sql)
 }
 
 #[derive(Debug, Args)]
@@ -69,6 +70,13 @@ pub struct Docker {
     pub command: Option<DockerCommands>,
 }
 
+#[derive(Debug, Args)]
+#[clap(args_conflicts_with_subcommands = true)]
+pub struct Sql {
+    #[clap(subcommand)]
+    pub command: Option<SqlCommands>,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum IamCommands {
     Setup,
@@ -110,4 +118,10 @@ pub enum DockerCommands {
     Build,
     Push,
     Help,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum SqlCommands {
+    Create,
+    Help
 }

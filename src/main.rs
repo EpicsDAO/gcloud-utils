@@ -2,7 +2,7 @@ use clap::Parser;
 use console::style;
 use gcloud_utils::cli::{
     Cli, Commands, ComputeCommands, DockerCommands, GcpConfig, GhCommands, IamCommands,
-    InitCommands, RunCommands,
+    InitCommands, RunCommands, SqlCommands
 };
 use gcloud_utils::compute::*;
 use gcloud_utils::constants::{PAPER_EMOJI, COMPLETE_EMOJI};
@@ -11,6 +11,7 @@ use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
 use gcloud_utils::init::*;
 use gcloud_utils::run::*;
+use gcloud_utils::sql::*;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
@@ -152,6 +153,23 @@ async fn main() {
                         "{}{}",
                         PAPER_EMOJI,
                         style("To see example;\n\n $gcu docker --help")
+                            .white()
+                            .bold()
+                    );
+                }
+            }
+        }
+        Commands::Sql(sql) => {
+            let sql_cmd = sql.command.unwrap_or(SqlCommands::Help);
+            match sql_cmd {
+                SqlCommands::Create => {
+                    let _ = process_create_sql(&gcp.project_id, &gcp.service_name, &gcp.region);
+                }
+                _ => {
+                    println!(
+                        "{}{}",
+                        PAPER_EMOJI,
+                        style("To see example;\n\n $gcu sql --help")
                             .white()
                             .bold()
                     );
