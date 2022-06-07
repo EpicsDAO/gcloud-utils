@@ -1,4 +1,11 @@
 use tokio::process::Command;
+use std::str;
+use console::style;
+use regex::Regex;
+
+fn regex(re_str: &str) -> Regex {
+  Regex::new(re_str).unwrap()
+}
 
 pub async fn process_create_service_account(project_id: &str, service_name: &str) {
   let description = String::from("--description='") + service_name + " Service Account'";
@@ -16,7 +23,24 @@ pub async fn process_create_service_account(project_id: &str, service_name: &str
     ])
     .output()
     .await;
-  println!("output = {:?}", output);
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {}",
+              style("Successfully created service account!").white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
 }
 
 pub async fn process_create_service_account_key(project_id: &str, service_name: &str) {
@@ -35,7 +59,24 @@ pub async fn process_create_service_account_key(project_id: &str, service_name: 
     ])
     .output()
     .await;
-  println!("output = {:?}", output);
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {}",
+              style("Successfully exported keyfile!").white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
 }
 
 pub async fn process_add_roles(project_id: &str, service_name: &str) {
@@ -81,7 +122,25 @@ pub async fn process_add_service_account_role(
     ])
     .output()
     .await;
-  println!("output = {:?}", output);
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {} {}",
+              style("Successfully added role:").white().bold(),
+              role_arg
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
 }
 
 pub async fn process_enable_permissions(project_id: &str) {
@@ -104,7 +163,7 @@ pub async fn process_enable_permissions(project_id: &str) {
     "spanner.googleapis.com",
   ];
   for service_name in service_urls {
-    let _output = Command::new("gcloud")
+    let output = Command::new("gcloud")
       .args(
         &[
           "services",
@@ -115,5 +174,24 @@ pub async fn process_enable_permissions(project_id: &str) {
           ])
       .output()
       .await;
+    match &output {
+      Ok(val) => {
+        let err = str::from_utf8(&val.stderr);
+        let rt = regex("ERROR:");
+        match rt.is_match(err.unwrap()) {
+          true => {
+              panic!("{:?}", err.unwrap())
+          }
+          false => {
+            println!(
+                "✅ {} {}",
+                style("Enabled API:").white().bold(),
+                service_name
+            );
+          }
+        }
+      },
+      Err(err) => println!("error = {:?}", err)
+    }
   }
 }

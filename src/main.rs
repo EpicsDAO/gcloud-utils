@@ -5,7 +5,7 @@ use gcloud_utils::cli::{
     InitCommands, RunCommands,
 };
 use gcloud_utils::compute::*;
-use gcloud_utils::constants::PAPER_EMOJI;
+use gcloud_utils::constants::{PAPER_EMOJI, COMPLETE_EMOJI};
 use gcloud_utils::docker::*;
 use gcloud_utils::gh::*;
 use gcloud_utils::iam::*;
@@ -14,6 +14,7 @@ use gcloud_utils::run::*;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
+
 
 #[tokio::main]
 async fn main() {
@@ -43,6 +44,11 @@ async fn main() {
                     .await;
                     process_add_roles(gcp.project_id.as_str(), gcp.service_name.as_str()).await;
                     process_enable_permissions(gcp.project_id.as_str()).await;
+                    println!(
+                        "{}{}",
+                        COMPLETE_EMOJI,
+                        style("Your IAM is all set!").white().bold()
+                    );
                 }
                 _ => {
                     println!(
