@@ -123,5 +123,6 @@ pub enum DockerCommands {
 #[derive(Debug, Subcommand)]
 pub enum SqlCommands {
     Create,
+    SetPrivateIp,
     Help
 }

@@ -165,6 +165,11 @@ async fn main() {
                 SqlCommands::Create => {
                     process_create_sql(&gcp.project_id, &gcp.service_name, &gcp.region).await;
                 }
+                SqlCommands::SetPrivateIp => {
+                    process_create_ip_range(&gcp.project_id, &gcp.service_name).await;
+                    process_connect_vpc_connector(&gcp.project_id, &gcp.service_name).await;
+                    process_assign_network(&gcp.project_id, &gcp.service_name).await;
+                }
                 _ => {
                     println!(
                         "{}{}",

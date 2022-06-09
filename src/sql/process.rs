@@ -68,6 +68,130 @@ pub async fn process_create_sql(project_id: &str, service_name: &str, region: &s
   }
 }
 
+pub async fn process_create_ip_range(project_id: &str, service_name: &str) {
+  println!(
+    "⏰ {}",
+    style("Creating IP range ...\nThis process takes 5 to 10 min.").white().bold()
+  );
+  let ip_range_name = String::from(service_name) + "-ip-range";
+  let network = String::from("--network=") + service_name;
+  let output = Command::new("gcloud")
+    .args(&[
+      "compute",
+      "addresses",
+      "create",
+      &ip_range_name,
+      "--global",
+      "--purpose=VPC_PEERING",
+      "--prefix-length=16",
+      "--description='peering range for Epics'",
+      &network,
+      "--project",
+      project_id
+    ])
+    .output()
+    .await;
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {}",
+              style("Successfully created IP range!").white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
+}
+
+pub async fn process_connect_vpc_connector(project_id: &str, service_name: &str) {
+  println!(
+    "⏰ {}",
+    style("Connecting to VPC Connector ...\nThis process takes 5 to 10 min.").white().bold()
+  );
+  let ip_range_name = String::from(service_name) + "-ip-range";
+  let network = String::from("--network=") + service_name;
+  let output = Command::new("gcloud")
+    .args(&[
+      "services",
+      "vpc-peerings",
+      "connect",
+      "--service=servicenetworking.googleapis.com",
+      "--ranges",
+      &ip_range_name,
+      &network,
+      "--project",
+      project_id
+    ])
+    .output()
+    .await;
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {}",
+              style("Successfully connected to VPC!").white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
+}
+
+pub async fn process_assign_network(project_id: &str, service_name: &str) {
+  println!(
+    "⏰ {}",
+    style("Assign network ...\nThis process takes 5 to 10 min.").white().bold()
+  );
+  let instance_name = String::from(service_name) + "-db";
+  let network = String::from("--network=") + service_name;
+  let output = Command::new("gcloud")
+    .args(&[
+      "beta",
+      "sql",
+      "instances",
+      "patch",
+      &instance_name,
+      &network,
+      "--project",
+      project_id
+    ])
+    .output()
+    .await;
+  match &output {
+    Ok(val) => {
+      let err = str::from_utf8(&val.stderr);
+      let rt = regex("ERROR:");
+      match rt.is_match(err.unwrap()) {
+        true => {
+            panic!("{:?}", err.unwrap())
+        }
+        false => {
+          println!(
+              "✅ {}",
+              style("Successfully setup your database!").white().bold()
+          );
+        }
+      }
+    },
+    Err(err) => println!("error = {:?}", err)
+  }
+}
+
 async fn region_to_timezone(region: &str) -> &str {
   let asia = regex("asia");
   let eu = regex("europe");
