@@ -21,7 +21,7 @@ pub async fn process_create_sql(project_id: &str, service_name: &str, region: &s
     .trim()
     .parse()
     .expect("Please input DB Root Password:");
-  let zone = region_to_timezone(region);
+  let zone = String::from(region) + "-b";
   println!(
     "⏰ {}",
     style("Creating Cloud SQL ...\nThis process takes 5 to 10 min.").white().bold()
@@ -38,7 +38,7 @@ pub async fn process_create_sql(project_id: &str, service_name: &str, region: &s
       "--cpu=1",
       "--memory=4096MB",
       "--zone",
-      zone,
+      &zone,
       "--root-password",
       &db_password,
       "--database-flags",
@@ -68,7 +68,7 @@ pub async fn process_create_sql(project_id: &str, service_name: &str, region: &s
   }
 }
 
-fn region_to_timezone(region: &str) -> &str {
+async fn region_to_timezone(region: &str) -> &str {
   let asia = regex("asia");
   let eu = regex("europe");
   let zone = if asia.is_match(region)  {

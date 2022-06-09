@@ -163,7 +163,7 @@ async fn main() {
             let sql_cmd = sql.command.unwrap_or(SqlCommands::Help);
             match sql_cmd {
                 SqlCommands::Create => {
-                    let _ = process_create_sql(&gcp.project_id, &gcp.service_name, &gcp.region);
+                    process_create_sql(&gcp.project_id, &gcp.service_name, &gcp.region).await;
                 }
                 _ => {
                     println!(
